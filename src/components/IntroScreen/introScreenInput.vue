@@ -10,6 +10,7 @@
       autocomplete="off"
       v-bind="$attrs"
       :id="id"
+      :name="name"
       v-bind:value="value"
       @input="(e) => $emit('input', e.target.value)"
       @blur="(e) => $emit('blur', e)"
@@ -30,6 +31,7 @@
     @Prop() placeholder: string
     @Prop() tabindex: string
     @Prop() id: string
+    @Prop() name: string
   }
 </script>
 <style src="./index.scss" lang="scss" scoped></style>

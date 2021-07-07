@@ -1,4 +1,5 @@
-import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
+import { VuexModule, Module, Mutation } from 'vuex-module-decorators'
+import { i18n } from '../../../i18n'
 
 @Module({
   namespaced: true
@@ -7,6 +8,7 @@ import { VuexModule, Module, Mutation, Action } from 'vuex-module-decorators'
 class UserRelatedSettings extends VuexModule {
   public theme: TTheme = null
   public isDrillTranslationInsteadWord: boolean = false
+  public locale: TLocale = null
 
   // Theme
   @Mutation
@@ -29,6 +31,13 @@ class UserRelatedSettings extends VuexModule {
   @Mutation
   toggleTranslationFlow () {
     this.isDrillTranslationInsteadWord = !this.isDrillTranslationInsteadWord
+  }
+
+  // Locale
+  @Mutation
+  changeLocale (locale: TLocale) {
+    this.locale = locale
+    i18n.locale = locale
   }
 }
 

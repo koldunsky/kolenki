@@ -3,6 +3,7 @@
     class="introScreen"
     :class="introScreenPassed && 'introScreen_inactive'"
     @submit="onSubmit"
+    ref="form"
     v-if="words.length < 2"
   >
     <div class="introScreen__holder">
@@ -21,11 +22,12 @@
             <span class="highlight" v-t="'introFirstScreen.appName'"/>
           </template>
           <template
-            v-for="type in ['word', 'translation']"
+            v-for="type in fieldNames"
             v-slot:[type]>
             <IntroScreenInput
               :tabindex="firstScreenTabindex"
               :key="type"
+              :name="type"
               :id="`intro_field_${type}`"
               :placeholder="$t(`introFirstScreen.${type}`)"
               v-model="$data[type]"
@@ -74,6 +76,7 @@
 <script lang="ts">
   import { Component, Vue } from 'vue-property-decorator'
   import { namespace } from 'vuex-class'
+  import each from 'lodash/each';
   import Button from '@/ui-kit/Button/index.vue'
   import IntroScreenInput from './introScreenInput.vue'
 
@@ -97,16 +100,17 @@
 
     word: string = ''
     translation: string = ''
+    fieldNames: string[] = ['word', 'translation']
     shouldShowFirstButton: boolean = false
     canShowSecondButton: boolean = false
     timerToShowSecondButton: number = null
 
+    $refs!: {
+      form: HTMLFormElement
+    }
+
     @UserRelatedData.Mutation
     passIntroScreen
-
-    get inputsAreNotEmpty () {
-      return Boolean(this.word) && Boolean(this.translation)
-    }
 
     get canShowFirstButton () {
       const {
@@ -115,7 +119,7 @@
         translation
       } = this
 
-      return (this.inputsAreNotEmpty && word.length + translation.length > 4) || shouldShowFirstButton
+      return (!this.getEmptyInput() && word.length + translation.length > 4) || shouldShowFirstButton
     }
 
     get canShowSecondScreen () {
@@ -131,7 +135,7 @@
     }
 
     addWord () {
-      if (!this.inputsAreNotEmpty) {
+      if (this.getEmptyInput()) {
         const fld = this.word.length ? 'translation' : 'word'
         console.warn(`${fld} is empty`)
 
@@ -150,17 +154,38 @@
     }
 
     onBlur () {
-      this.shouldShowFirstButton = this.inputsAreNotEmpty
+      this.shouldShowFirstButton = !this.getEmptyInput();
     }
 
     onFocus () {
       this.shouldShowFirstButton = false
     }
 
+    getEmptyInput (): HTMLInputElement | void {
+      let emptyInput
+
+      this.fieldNames.forEach((type) => {
+        if (emptyInput) {
+          return
+        }
+
+        if (!this[type] && Boolean(this.$refs.form)) {
+          emptyInput = this.$refs.form.querySelector(`input[name="${type}"]`)
+        }
+      })
+
+      return emptyInput
+    }
+
     onSubmit (e) {
       e.preventDefault()
 
       if (this.words.length < 1) {
+        const emptyInput = this.getEmptyInput()
+
+        if (emptyInput && emptyInput !== document.activeElement) {
+          emptyInput.focus()
+        }
         this.addWord()
       } else {
         this.passIntroScreen()

@@ -26,7 +26,7 @@
             />
           </span>
         </span>
-        <span class="nav__item-label">{{name | capitalize}}</span>
+        <span class="nav__item-label" v-t="`nav.${name}`"></span>
       </button>
     </div>
   </div>

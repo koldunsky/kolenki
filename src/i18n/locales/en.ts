@@ -26,7 +26,8 @@ export const en = {
     colorTheme: 'Color theme',
     dark: 'dark',
     light: 'light',
-    system: 'set by system settings'
+    system: 'auto',
+    language: 'Language'
   },
   introFirstScreen: {
     text: '{appName} is an app that helps to remember words. Type in {word} and {translation}',
@@ -39,5 +40,11 @@ export const en = {
     text: 'Good job! To start training you need to add at least {threeWords}',
     threeWords: 'three words',
     button: 'Got it!'
+  },
+  nav: {
+    add: 'Add',
+    drill: 'Train',
+    list: 'List',
+    settings: 'Settings'
   }
 }
